@@ -16,6 +16,7 @@ use Symfony\Component\DomCrawler\Crawler;
 
 class CreateTaskServiceTest extends TestCase
 {
+    // バリデーションエラー：空のタイトル
     public function testEmptyTitleValidation()
     {
         $html = $this->createTaskServiceResponse('', '');
@@ -32,6 +33,7 @@ class CreateTaskServiceTest extends TestCase
         $this->assertTrue(in_array('空のタイトルは許可されません。', $errors));
     }
 
+    // バリデーションエラー：タイトルにスラッシュを含む
     public function testIllegalSlashValidation()
     {
         $html = $this->createTaskServiceResponse('abc/test', '');
@@ -51,6 +53,7 @@ class CreateTaskServiceTest extends TestCase
         $this->assertTrue(in_array('タイトルに / (スラッシュ)は使用できません。', $errors));
     }
 
+    // バリデーションエラー：タイトルにドットを含む
     public function testIllegalDotValidation()
     {
         $html = $this->createTaskServiceResponse('abc.test', '');
@@ -70,6 +73,7 @@ class CreateTaskServiceTest extends TestCase
         $this->assertTrue(in_array('タイトルに . (ドット)は使用できません。', $errors));
     }
 
+    // バリデーションエラー：タイトルが長すぎる
     public function testTooLongTitleValidation()
     {
         $maxCharacters = TaskTitle::maxCharacters();
@@ -90,6 +94,7 @@ class CreateTaskServiceTest extends TestCase
         $this->assertTrue(in_array("{$maxCharacters}文字以上のタイトルは許可されません。", $errors));
     }
 
+    // バリデーションエラー：空の本文
     public function testEmptyBodyValidation()
     {
         $html = $this->createTaskServiceResponse('', '');
@@ -109,6 +114,7 @@ class CreateTaskServiceTest extends TestCase
         $this->assertTrue(in_array('空の本文は許可されません。', $errors));
     }
 
+    // バリデーションエラー：本文が長すぎる
     public function testTooLongBodyValidation()
     {
         $maxCharacters = TaskBody::maxCharacters();
@@ -129,6 +135,7 @@ class CreateTaskServiceTest extends TestCase
         $this->assertTrue(in_array("{$maxCharacters}文字以上の本文は許可されません。", $errors));
     }
 
+    // バリデーションエラー：タイトルの重複
     public function testDuplicatedTitleValidation()
     {
         $title = '重複確認' . date('Ymdhis');
@@ -157,6 +164,27 @@ class CreateTaskServiceTest extends TestCase
         unlink($filename);
     }
 
+    // バリデーションエラー後、入力値が復元されている
+    public function testRestoreValuesOnValidationError()
+    {
+        $title = str_pad('a', TaskTitle::maxCharacters() + 1);
+        $body = str_pad('a', TaskBody::maxCharacters() + 1);
+        $html = $this->createTaskServiceResponse($title, $body);
+        // メモリ上のコンテンツのDOMをクローラで解析する
+        $crawler = new Crawler();
+        $crawler->addContent($html);
+
+        // HTMLタイトル
+        $this->assertEquals('タスク作成', $crawler->filter('title')->text());
+
+        $outputTitle = mb_substr($title, 0, mb_strlen($title) - 1);
+        $this->assertEquals($outputTitle, $crawler->filter('#title')->attr('value'));
+
+        $outputBody = mb_substr($body, 0, mb_strlen($body) - 1);
+        $this->assertEquals($outputBody, $crawler->filter('#body')->text());
+    }
+
+    // タスク作成成功
     public function testCreate()
     {
         $title = 'てすと' . date('Ymdhis');
@@ -184,6 +212,13 @@ class CreateTaskServiceTest extends TestCase
         unlink($filename);
     }
 
+    /**
+     * タスク作成サービスを実行してHTMLレスポンスを得る
+     *
+     * @param string $title
+     * @param string $body
+     * @return string
+     */
     private function createTaskServiceResponse(string $title, string $body): string
     {
         // サービスの出力先をメモリにする
@@ -199,6 +234,8 @@ class CreateTaskServiceTest extends TestCase
             $body
         ));
         rewind($stream);
-        return stream_get_contents($stream);
+        $html = stream_get_contents($stream);
+        fclose($stream);
+        return $html;
     }
 }
