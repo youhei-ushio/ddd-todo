@@ -20,6 +20,7 @@ class CreateTaskPageServiceTest extends TestCase
         $service->handle(new CreateTaskPageRequest());
         rewind($stream);
         $html = stream_get_contents($stream);
+        fclose($stream);
 
         // メモリ上のコンテンツのDOMをクローラで解析する
         $crawler = new Crawler();
