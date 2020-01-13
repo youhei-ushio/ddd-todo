@@ -15,16 +15,19 @@ final class CreateTaskPageHtmlRenderer extends HtmlRenderer implements CreateTas
      */
     public function render(array $validationErrors, array $values): void
     {
-        $errors = $this->validationErrorsHtml($validationErrors);
+        $maxTitleLength = TaskTitle::maxCharacters();
+        $maxBodyLength = TaskBody::maxCharacters();
 
+        // 入力値の復元
+        // エスケープと長さ制限だけしておく
         if (array_key_exists('title', $values)) {
-            $values['title'] = mb_substr($values['title'], 0, TaskTitle::maxCharacters());
+            $values['title'] = mb_substr($values['title'], 0, $maxTitleLength);
             $values['title'] = htmlspecialchars($values['title']);
         } else {
             $values['title'] = '';
         }
         if (array_key_exists('body', $values)) {
-            $values['body'] = mb_substr($values['body'], 0, TaskBody::maxCharacters());
+            $values['body'] = mb_substr($values['body'], 0, $maxBodyLength);
             $values['body'] = htmlspecialchars($values['body']);
         } else {
             $values['body'] = '';
@@ -39,13 +42,13 @@ final class CreateTaskPageHtmlRenderer extends HtmlRenderer implements CreateTas
                     <form action=\"?action=create\" method=\"post\">
                         <div>
                             <label for=\"title\">タイトル</label>
-                            <input type=\"text\" name=\"title\" id=\"title\" value=\"{$values['title']}\" maxlength=\"20\">
-                            {$errors['title']}
+                            <input type=\"text\" name=\"title\" id=\"title\" value=\"{$values['title']}\" maxlength=\"{$maxTitleLength}\">
+                            {$this->validationErrorHtml($validationErrors, 'title')}
                         </div>
                         <div>
                             <label for=\"body\">本文</label>
-                            <textarea name=\"body\" id=\"body\" rows=\"10\" maxlength=\"500\">{$values['body']}</textarea>
-                            {$errors['body']}
+                            <textarea name=\"body\" id=\"body\" rows=\"10\" maxlength=\"{$maxBodyLength}\">{$values['body']}</textarea>
+                            {$this->validationErrorHtml($validationErrors, 'body')}
                         </div>
                         <div>
                             <button type=\"submit\">保存</button>
@@ -60,29 +63,24 @@ final class CreateTaskPageHtmlRenderer extends HtmlRenderer implements CreateTas
     }
 
     /**
-     * @param ValidationError[] $validationErrors
-     * @return string[]
+     * バリデーションエラーメッセージ部分のHTMLコンテンツ
+     *
+     * @param array $validationErrors
+     * @param string $fieldName
+     * @return string
      */
-    private function validationErrorsHtml(array $validationErrors): array
+    private function validationErrorHtml(array $validationErrors, string $fieldName): string
     {
-        $errors = [
-            'title' => '',
-            'body' => '',
-        ];
-        $titleError = $this->findValidationErrorByFieldName($validationErrors, 'title');
-        if ($titleError !== null) {
-            $errors['title'] .= '<p class="validation-error">' . $titleError->message() . '</p>';
+        $error = $this->findValidationErrorByFieldName($validationErrors, $fieldName);
+        if ($error === null) {
+            return '';
         }
-
-        $bodyError = $this->findValidationErrorByFieldName($validationErrors, 'body');
-        if ($bodyError !== null) {
-            $errors['body'] .= '<p class="validation-error">' . $bodyError->message() . '</p>';
-        }
-
-        return $errors;
+        return '<p class="validation-error">' . $error->message() . '</p>';
     }
 
     /**
+     * 対象フィールドのバリデーションエラーを探す
+     *
      * @param ValidationError[] $validationErrors
      * @param string $fieldName
      * @return ValidationError|null
