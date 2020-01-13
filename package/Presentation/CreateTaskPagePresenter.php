@@ -8,7 +8,7 @@ interface CreateTaskPagePresenter
 {
     /**
      * @param ValidationError[] $validationErrors
-     * @param array $defaultValues
+     * @param array $values
      */
-    public function render(array $validationErrors, array $defaultValues): void;
+    public function render(array $validationErrors, array $values): void;
 }

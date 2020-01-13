@@ -3,26 +3,29 @@
 namespace package\Infrastructure\Presenter;
 
 use package\Application\Model\ValueObject\ValidationError;
+use package\Domain\Model\ValueObject\TaskBody;
+use package\Domain\Model\ValueObject\TaskTitle;
 use package\Presentation\CreateTaskPagePresenter;
 
 final class CreateTaskPageHtmlRenderer extends HtmlRenderer implements CreateTaskPagePresenter
 {
     /**
      * @param ValidationError[] $validationErrors
-     * @param array $defaultValues
+     * @param array $values
      */
-    public function render(array $validationErrors, array $defaultValues): void
+    public function render(array $validationErrors, array $values): void
     {
         $errors = $this->validationErrorsHtml($validationErrors);
 
-        $values = [];
-        if (array_key_exists('title', $defaultValues)) {
-            $values['title'] = htmlspecialchars($defaultValues['title']);
+        if (array_key_exists('title', $values)) {
+            $values['title'] = mb_substr($values['title'], 0, TaskTitle::maxCharacters());
+            $values['title'] = htmlspecialchars($values['title']);
         } else {
             $values['title'] = '';
         }
-        if (array_key_exists('body', $defaultValues)) {
-            $values['body'] = htmlspecialchars($defaultValues['body']);
+        if (array_key_exists('body', $values)) {
+            $values['body'] = mb_substr($values['body'], 0, TaskBody::maxCharacters());
+            $values['body'] = htmlspecialchars($values['body']);
         } else {
             $values['body'] = '';
         }
