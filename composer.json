@@ -1,6 +1,6 @@
 {
     "name": "youhei-ushio/ddd-todo",
-    "description": "Simple todo application on onion architecture.",
+    "description": "Simple todo application with onion architecture.",
     "type": "project",
     "license": "MIT",
     "minimum-stability": "stable",
