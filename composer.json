@@ -1,0 +1,35 @@
+{
+    "name": "youhei-ushio/ddd-todo",
+    "description": "Simple todo application on onion architecture.",
+    "type": "project",
+    "license": "MIT",
+    "minimum-stability": "stable",
+    "config": {
+        "platform": {
+            "php": "7.2"
+        }
+    },
+    "require": {
+        "ext-dom": "*"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^8.5",
+        "symfony/dom-crawler": "^4.4",
+        "symfony/css-selector": "^4.4"
+    },
+    "autoload": {
+        "psr-4": {
+            "package\\": "package/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Tests\\": "tests/"
+        }
+    },
+    "scripts": {
+        "test": [
+            "vendor/bin/phpunit"
+        ]
+    }
+}
