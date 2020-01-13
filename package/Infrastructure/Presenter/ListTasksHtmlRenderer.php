@@ -10,7 +10,7 @@ final class ListTasksHtmlRenderer extends HtmlRenderer implements ListTasksPrese
     /**
      * @param Task[] $tasks
      */
-    public function render(array $tasks): void
+    public function output(array $tasks): void
     {
         $listHtml = '';
         foreach ($tasks as $task) {
@@ -30,6 +30,6 @@ final class ListTasksHtmlRenderer extends HtmlRenderer implements ListTasksPrese
             </html>
         ";
 
-        $this->_render($html);
+        $this->render($html);
     }
 }

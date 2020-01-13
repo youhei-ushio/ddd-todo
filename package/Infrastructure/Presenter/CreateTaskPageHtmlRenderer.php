@@ -13,7 +13,7 @@ final class CreateTaskPageHtmlRenderer extends HtmlRenderer implements CreateTas
      * @param ValidationError[] $validationErrors
      * @param array $values
      */
-    public function render(array $validationErrors, array $values): void
+    public function output(array $validationErrors, array $values): void
     {
         $maxTitleLength = TaskTitle::maxCharacters();
         $maxBodyLength = TaskBody::maxCharacters();
@@ -59,7 +59,7 @@ final class CreateTaskPageHtmlRenderer extends HtmlRenderer implements CreateTas
             </html>
         ";
 
-        $this->_render($html);
+        $this->render($html);
     }
 
     /**

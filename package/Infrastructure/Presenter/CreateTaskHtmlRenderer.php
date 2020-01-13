@@ -6,7 +6,7 @@ use package\Presentation\CreateTaskPresenter;
 
 final class CreateTaskHtmlRenderer extends HtmlRenderer implements CreateTaskPresenter
 {
-    public function render(): void
+    public function output(): void
     {
         $html = '
             <html lang="ja">
@@ -20,6 +20,6 @@ final class CreateTaskHtmlRenderer extends HtmlRenderer implements CreateTaskPre
             </html>
         ';
 
-        $this->_render($html);
+        $this->render($html);
     }
 }

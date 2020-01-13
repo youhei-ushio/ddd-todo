@@ -4,5 +4,5 @@ namespace package\Presentation;
 
 interface CreateTaskPresenter
 {
-    public function render(): void;
+    public function output(): void;
 }

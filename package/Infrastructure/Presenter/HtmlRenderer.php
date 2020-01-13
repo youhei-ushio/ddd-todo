@@ -18,7 +18,7 @@ class HtmlRenderer
         }
     }
 
-    protected function _render($html): void
+    protected function render($html): void
     {
         fwrite($this->stream, $html);
     }

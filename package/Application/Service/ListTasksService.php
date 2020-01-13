@@ -18,7 +18,7 @@ final class ListTasksService
     public function handle(ListTasksRequest $request): void
     {
         $tasks = $this->repository->find();
-        $this->listTasksPresenter->render($tasks);
+        $this->listTasksPresenter->output($tasks);
     }
 
     private $repository;

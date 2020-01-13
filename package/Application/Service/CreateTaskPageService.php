@@ -13,7 +13,7 @@ final class CreateTaskPageService
 
     public function handle(CreateTaskPageRequest $request): void
     {
-        $this->presenter->render([], []);
+        $this->presenter->output([], []);
     }
 
     private $presenter;

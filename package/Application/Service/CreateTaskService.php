@@ -25,7 +25,7 @@ final class CreateTaskService
     {
         $errors = $request->validate($this->validator);
         if (count($errors) > 0) {
-            $this->createTaskPagePresenter->render($errors, $request->rawValues());
+            $this->createTaskPagePresenter->output($errors, $request->rawValues());
             return;
         }
 
@@ -35,7 +35,7 @@ final class CreateTaskService
         );
         $this->repository->save($task);
 
-        $this->createTaskPresenter->render();
+        $this->createTaskPresenter->output();
     }
 
     private $validator;

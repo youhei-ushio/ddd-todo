@@ -9,5 +9,5 @@ interface ListTasksPresenter
     /**
      * @param Task[] $tasks
      */
-    public function render(array $tasks): void;
+    public function output(array $tasks): void;
 }
