@@ -33,5 +33,10 @@ final class CreateTaskRequest
         );
     }
 
+    public function rawValues(): array
+    {
+        return $this->data;
+    }
+
     private $data;
 }
