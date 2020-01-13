@@ -36,7 +36,9 @@ class CreateTaskPageServiceTest extends TestCase
         // HTMLタイトル
         $this->assertEquals('タスク作成', $crawler->filter('title')->text());
         // 入力欄
+        $this->assertEquals('タイトル', $crawler->filter('label[for="title"]')->text());
         $this->assertEquals(1, $crawler->filter('#title')->count());
+        $this->assertEquals('本文a', $crawler->filter('label[for="body"]')->text());
         $this->assertEquals(1, $crawler->filter('#body')->count());
         // ボタン
         $this->assertEquals('submit', $crawler->filter('button')->attr('type'));
