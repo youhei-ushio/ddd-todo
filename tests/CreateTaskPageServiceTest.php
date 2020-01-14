@@ -5,17 +5,22 @@ namespace Tests;
 use package\Application\Service\CreateTaskPageRequest;
 use package\Application\Service\CreateTaskPageService;
 use package\Infrastructure\Presenter\CreateTaskPageHtmlRenderer;
+use package\Infrastructure\Presenter\HtmlRenderer;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\DomCrawler\Crawler;
 
 class CreateTaskPageServiceTest extends TestCase
 {
+    /**
+     * @runInSeparateProcess
+     */
     public function testNewPage()
     {
         // サービスの出力先をメモリにする
         $stream = fopen('php://memory', 'r+');
+        $renderer = new HtmlRenderer($stream);
         $service = new CreateTaskPageService(
-            new CreateTaskPageHtmlRenderer($stream)
+            new CreateTaskPageHtmlRenderer($renderer)
         );
         $service->handle(new CreateTaskPageRequest());
         rewind($stream);

@@ -10,13 +10,18 @@ use package\Domain\Model\ValueObject\TaskBody;
 use package\Domain\Model\ValueObject\TaskTitle;
 use package\Infrastructure\Presenter\CreateTaskHtmlRenderer;
 use package\Infrastructure\Presenter\CreateTaskPageHtmlRenderer;
+use package\Infrastructure\Presenter\HtmlRenderer;
 use package\Infrastructure\Service\TaskFileRepository;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\DomCrawler\Crawler;
 
 class CreateTaskServiceTest extends TestCase
 {
-    // バリデーションエラー：空のタイトル
+    /**
+     * バリデーションエラー：空のタイトル
+     *
+     * @runInSeparateProcess
+     */
     public function testEmptyTitleValidation()
     {
         $html = $this->createTaskServiceResponse('', '');
@@ -33,7 +38,11 @@ class CreateTaskServiceTest extends TestCase
         $this->assertTrue(in_array('空のタイトルは許可されません。', $errors));
     }
 
-    // バリデーションエラー：タイトルにスラッシュを含む
+    /**
+     * バリデーションエラー：タイトルにスラッシュを含む
+     *
+     * @runInSeparateProcess
+     */
     public function testIllegalSlashValidation()
     {
         $html = $this->createTaskServiceResponse('abc/test', '');
@@ -53,7 +62,11 @@ class CreateTaskServiceTest extends TestCase
         $this->assertTrue(in_array('タイトルに / (スラッシュ)は使用できません。', $errors));
     }
 
-    // バリデーションエラー：タイトルにドットを含む
+    /**
+     * バリデーションエラー：タイトルにドットを含む
+     *
+     * @runInSeparateProcess
+     */
     public function testIllegalDotValidation()
     {
         $html = $this->createTaskServiceResponse('abc.test', '');
@@ -73,7 +86,11 @@ class CreateTaskServiceTest extends TestCase
         $this->assertTrue(in_array('タイトルに . (ドット)は使用できません。', $errors));
     }
 
-    // バリデーションエラー：タイトルが長すぎる
+    /**
+     * バリデーションエラー：タイトルが長すぎる
+     *
+     * @runInSeparateProcess
+     */
     public function testTooLongTitleValidation()
     {
         $maxCharacters = TaskTitle::maxCharacters();
@@ -94,7 +111,11 @@ class CreateTaskServiceTest extends TestCase
         $this->assertTrue(in_array("{$maxCharacters}文字以上のタイトルは許可されません。", $errors));
     }
 
-    // バリデーションエラー：空の本文
+    /**
+     * バリデーションエラー：空の本文
+     *
+     * @runInSeparateProcess
+     */
     public function testEmptyBodyValidation()
     {
         $html = $this->createTaskServiceResponse('', '');
@@ -114,7 +135,12 @@ class CreateTaskServiceTest extends TestCase
         $this->assertTrue(in_array('空の本文は許可されません。', $errors));
     }
 
-    // バリデーションエラー：本文が長すぎる
+
+    /**
+     * バリデーションエラー：本文が長すぎる
+     *
+     * @runInSeparateProcess
+     */
     public function testTooLongBodyValidation()
     {
         $maxCharacters = TaskBody::maxCharacters();
@@ -168,7 +194,11 @@ class CreateTaskServiceTest extends TestCase
         unlink($filename);
     }
 
-    // バリデーションエラー後、入力値が復元されている
+    /**
+     * バリデーションエラー後、入力値が復元されている
+     *
+     * @runInSeparateProcess
+     */
     public function testRestoreValuesOnValidationError()
     {
         $title = str_pad('a', TaskTitle::maxCharacters() + 1);
@@ -231,11 +261,12 @@ class CreateTaskServiceTest extends TestCase
     {
         // サービスの出力先をメモリにする
         $stream = fopen('php://memory', 'r+');
+        $renderer = new HtmlRenderer($stream);
         $service = new CreateTaskService(
             new CreateTaskValidator(new TaskFileRepository()),
             new TaskFileRepository(),
-            new CreateTaskHtmlRenderer($stream),
-            new CreateTaskPageHtmlRenderer($stream)
+            new CreateTaskHtmlRenderer($renderer),
+            new CreateTaskPageHtmlRenderer($renderer)
         );
         $service->handle(new CreateTaskRequest(
             $title,

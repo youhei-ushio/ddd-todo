@@ -7,8 +7,13 @@ use package\Domain\Model\ValueObject\TaskBody;
 use package\Domain\Model\ValueObject\TaskTitle;
 use package\Presentation\CreateTaskPagePresenter;
 
-final class CreateTaskPageHtmlRenderer extends HtmlRenderer implements CreateTaskPagePresenter
+final class CreateTaskPageHtmlRenderer implements CreateTaskPagePresenter
 {
+    public function __construct(HtmlRenderer $renderer)
+    {
+        $this->renderer = $renderer;
+    }
+
     /**
      * @param ValidationError[] $validationErrors
      * @param array $values
@@ -59,7 +64,7 @@ final class CreateTaskPageHtmlRenderer extends HtmlRenderer implements CreateTas
             </html>
         ";
 
-        $this->render($html);
+        $this->renderer->render($html);
     }
 
     /**
@@ -94,4 +99,6 @@ final class CreateTaskPageHtmlRenderer extends HtmlRenderer implements CreateTas
         }
         return null;
     }
+
+    private $renderer;
 }

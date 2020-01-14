@@ -11,6 +11,8 @@ use package\Infrastructure\Presenter\CreateTaskHtmlRenderer;
 use package\Infrastructure\Presenter\CreateTaskPageHtmlRenderer;
 use package\Infrastructure\Presenter\ListTasksHtmlRenderer;
 use package\Infrastructure\Service\TaskFileRepository;
+use package\Infrastructure\Presenter\HtmlRenderer;
+use package\Application\Service\ListTasksValidator;
 
 require_once 'vendor/autoload.php';
 
@@ -19,11 +21,13 @@ require_once 'vendor/autoload.php';
 $action = strtolower($_GET['action']);
 $method = strtolower($_SERVER['REQUEST_METHOD']);
 
+$htmlRenderer = new HtmlRenderer();
+
 if ($action === 'create' && $method === 'get') {
     $controller = new CreateTaskPageHandler();
     $controller->handle(
         new CreateTaskPageService(
-            new CreateTaskPageHtmlRenderer()
+            new CreateTaskPageHtmlRenderer($htmlRenderer)
         )
     );
 } elseif ($action === 'create' && $method === 'post') {
@@ -35,8 +39,8 @@ if ($action === 'create' && $method === 'get') {
                 $repository
             ),
             $repository,
-            new CreateTaskHtmlRenderer(),
-            new CreateTaskPageHtmlRenderer()
+            new CreateTaskHtmlRenderer($htmlRenderer),
+            new CreateTaskPageHtmlRenderer($htmlRenderer)
         )
     );
 } elseif ($action === 'list' && $method === 'get') {
@@ -45,7 +49,8 @@ if ($action === 'create' && $method === 'get') {
     $controller->handle(
         new ListTasksService(
             $repository,
-            new ListTasksHtmlRenderer()
+            new ListTasksValidator(),
+            new ListTasksHtmlRenderer($htmlRenderer)
         )
     );
 } else {

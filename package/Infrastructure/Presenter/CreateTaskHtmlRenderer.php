@@ -4,8 +4,13 @@ namespace package\Infrastructure\Presenter;
 
 use package\Presentation\CreateTaskPresenter;
 
-final class CreateTaskHtmlRenderer extends HtmlRenderer implements CreateTaskPresenter
+final class CreateTaskHtmlRenderer implements CreateTaskPresenter
 {
+    public function __construct(HtmlRenderer $renderer)
+    {
+        $this->renderer = $renderer;
+    }
+
     public function output(): void
     {
         $html = '
@@ -20,7 +25,8 @@ final class CreateTaskHtmlRenderer extends HtmlRenderer implements CreateTaskPre
             </html>
         ';
 
-        header('Content-type: text/html');
-        $this->render($html);
+        $this->renderer->render($html);
     }
+
+    private $renderer;
 }

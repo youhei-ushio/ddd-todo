@@ -2,15 +2,22 @@
 
 namespace package\Infrastructure\Presenter;
 
+use package\Application\Model\ValueObject\ValidationError;
 use package\Domain\Model\Entity\Task;
 use package\Presentation\ListTasksPresenter;
 
-final class ListTasksHtmlRenderer extends HtmlRenderer implements ListTasksPresenter
+final class ListTasksHtmlRenderer implements ListTasksPresenter
 {
+    public function __construct(HtmlRenderer $renderer)
+    {
+        $this->renderer = $renderer;
+    }
+
     /**
      * @param Task[] $tasks
+     * @param ValidationError[] $validationErrors
      */
-    public function output(array $tasks): void
+    public function output(array $tasks, array $validationErrors): void
     {
         $listHtml = '';
         foreach ($tasks as $task) {
@@ -30,6 +37,8 @@ final class ListTasksHtmlRenderer extends HtmlRenderer implements ListTasksPrese
             </html>
         ";
 
-        $this->render($html);
+        $this->renderer->render($html);
     }
+
+    private $renderer;
 }
