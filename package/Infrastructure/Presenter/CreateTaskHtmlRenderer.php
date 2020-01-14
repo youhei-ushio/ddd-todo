@@ -20,6 +20,7 @@ final class CreateTaskHtmlRenderer extends HtmlRenderer implements CreateTaskPre
             </html>
         ';
 
+        header('Content-type: text/html');
         $this->render($html);
     }
 }

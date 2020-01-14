@@ -135,7 +135,11 @@ class CreateTaskServiceTest extends TestCase
         $this->assertTrue(in_array("{$maxCharacters}文字以上の本文は許可されません。", $errors));
     }
 
-    // バリデーションエラー：タイトルの重複
+    /**
+     * バリデーションエラー：タイトルの重複
+     *
+     * @runInSeparateProcess
+     */
     public function testDuplicatedTitleValidation()
     {
         $title = '重複確認' . date('Ymdhis');
@@ -184,7 +188,11 @@ class CreateTaskServiceTest extends TestCase
         $this->assertEquals($outputBody, $crawler->filter('#body')->text());
     }
 
-    // タスク作成成功
+    /**
+     * タスク作成成功
+     *
+     * @runInSeparateProcess
+     */
     public function testCreate()
     {
         $title = 'てすと' . date('Ymdhis');
