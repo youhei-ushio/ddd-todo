@@ -10,9 +10,10 @@
         }
     },
     "require": {
-        "ext-dom": "*"
+
     },
     "require-dev": {
+        "ext-dom": "*",
         "phpunit/phpunit": "^8.5",
         "symfony/dom-crawler": "^4.4",
         "symfony/css-selector": "^4.4"
