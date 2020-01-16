@@ -1,6 +1,6 @@
 <?php
 
-namespace Tests;
+namespace Tests\UseCase;
 
 use DOMElement;
 use package\Application\Service\CreateTaskRequest;
@@ -10,10 +10,11 @@ use package\Domain\Model\ValueObject\TaskBody;
 use package\Domain\Model\ValueObject\TaskTitle;
 use package\Infrastructure\Presenter\CreateTaskHtmlRenderer;
 use package\Infrastructure\Presenter\CreateTaskPageHtmlRenderer;
-use package\Infrastructure\Presenter\HtmlRenderer;
+use package\Infrastructure\Presenter\HtmlStreamRenderer;
 use package\Infrastructure\Service\TaskFileRepository;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\DomCrawler\Crawler;
+use Tests\Mock\TestTaskSaveDirectory;
 
 class CreateTaskServiceTest extends TestCase
 {
@@ -189,8 +190,8 @@ class CreateTaskServiceTest extends TestCase
         $this->assertTrue(in_array("{$title} は登録済みです。", $errors));
 
         // 後始末
-        $directory = dirname(__DIR__) . '/tasks';
-        $filename = "{$directory}/{$title}.txt";
+        $directory = new TestTaskSaveDirectory();
+        $filename = "{$directory->path()}/{$title}.txt";
         unlink($filename);
     }
 
@@ -241,8 +242,8 @@ class CreateTaskServiceTest extends TestCase
         $this->assertEquals('/?action=list', $crawler->filter('a')->attr('href'));
 
         // 保存結果
-        $directory = dirname(__DIR__) . '/tasks';
-        $filename = "{$directory}/{$title}.txt";
+        $directory = new TestTaskSaveDirectory();
+        $filename = "{$directory->path()}/{$title}.txt";
         $this->assertTrue(file_exists($filename));
         $this->assertEquals($body, file_get_contents($filename));
 
@@ -261,10 +262,11 @@ class CreateTaskServiceTest extends TestCase
     {
         // サービスの出力先をメモリにする
         $stream = fopen('php://memory', 'r+');
-        $renderer = new HtmlRenderer($stream);
+        $renderer = new HtmlStreamRenderer($stream);
+        $repository = new TaskFileRepository(new TestTaskSaveDirectory());
         $service = new CreateTaskService(
-            new CreateTaskValidator(new TaskFileRepository()),
-            new TaskFileRepository(),
+            new CreateTaskValidator($repository),
+            $repository,
             new CreateTaskHtmlRenderer($renderer),
             new CreateTaskPageHtmlRenderer($renderer)
         );

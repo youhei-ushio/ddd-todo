@@ -11,8 +11,9 @@ use package\Infrastructure\Presenter\CreateTaskHtmlRenderer;
 use package\Infrastructure\Presenter\CreateTaskPageHtmlRenderer;
 use package\Infrastructure\Presenter\ListTasksHtmlRenderer;
 use package\Infrastructure\Service\TaskFileRepository;
-use package\Infrastructure\Presenter\HtmlRenderer;
-use package\Application\Service\ListTasksValidator;
+use package\Infrastructure\Presenter\HtmlOutputRenderer;
+use package\Infrastructure\Presenter\PaginatorHtmlBuilder;
+use package\Domain\Model\ValueObject\TaskSaveDirectory;
 
 require_once 'vendor/autoload.php';
 
@@ -21,7 +22,7 @@ require_once 'vendor/autoload.php';
 $action = strtolower($_GET['action']);
 $method = strtolower($_SERVER['REQUEST_METHOD']);
 
-$htmlRenderer = new HtmlRenderer();
+$htmlRenderer = new HtmlOutputRenderer();
 
 if ($action === 'create' && $method === 'get') {
     $controller = new CreateTaskPageHandler();
@@ -31,7 +32,9 @@ if ($action === 'create' && $method === 'get') {
         )
     );
 } elseif ($action === 'create' && $method === 'post') {
-    $repository = new TaskFileRepository();
+    $repository = new TaskFileRepository(
+        new TaskSaveDirectory()
+    );
     $controller = new CreateTaskHandler();
     $controller->handle(
         new CreateTaskService(
@@ -44,13 +47,17 @@ if ($action === 'create' && $method === 'get') {
         )
     );
 } elseif ($action === 'list' && $method === 'get') {
-    $repository = new TaskFileRepository();
+    $repository = new TaskFileRepository(
+        new TaskSaveDirectory()
+    );
     $controller = new ListTasksHandler();
     $controller->handle(
         new ListTasksService(
             $repository,
-            new ListTasksValidator(),
-            new ListTasksHtmlRenderer($htmlRenderer)
+            new ListTasksHtmlRenderer(
+                $htmlRenderer,
+                new PaginatorHtmlBuilder()
+            )
         )
     );
 } else {

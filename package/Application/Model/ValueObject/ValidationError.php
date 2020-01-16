@@ -22,5 +22,11 @@ final class ValidationError
         return $this->data['message'];
     }
 
+    public function equals(self $value): bool
+    {
+        return $this->fieldName() === $value->fieldName()
+            && $this->message() === $value->message();
+    }
+
     private $data;
 }

@@ -22,6 +22,11 @@ final class TaskBody
         return $this->value;
     }
 
+    public function equals(self $value): bool
+    {
+        return $this->value() === $value->value();
+    }
+
     public static function maxCharacters(): int
     {
         return 500;
