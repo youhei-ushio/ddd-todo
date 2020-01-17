@@ -5,7 +5,7 @@ namespace Tests\Mock;
 
 use package\Infrastructure\Presenter\HtmlRenderer;
 
-class NoHtmlRenderer implements HtmlRenderer
+final class NoHtmlRenderer implements HtmlRenderer
 {
     public function render(string $html): void
     {
