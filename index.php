@@ -4,16 +4,21 @@ use package\Application\Service\CreateTaskPageService;
 use package\Application\Service\CreateTaskService;
 use package\Application\Service\CreateTaskValidator;
 use package\Application\Service\ListTasksService;
+use package\Application\Service\ViewTaskService;
+use package\Application\Service\ViewTaskValidator;
+use package\Domain\Model\ValueObject\TaskSaveDirectory;
 use package\Infrastructure\Controller\Http\CreateTaskHandler;
 use package\Infrastructure\Controller\Http\CreateTaskPageHandler;
 use package\Infrastructure\Controller\Http\ListTasksHandler;
+use package\Infrastructure\Controller\Http\ViewTaskHandler;
 use package\Infrastructure\Presenter\CreateTaskHtmlRenderer;
 use package\Infrastructure\Presenter\CreateTaskPageHtmlRenderer;
-use package\Infrastructure\Presenter\ListTasksHtmlRenderer;
-use package\Infrastructure\Service\TaskFileRepository;
 use package\Infrastructure\Presenter\HtmlOutputRenderer;
+use package\Infrastructure\Presenter\ListTasksHtmlRenderer;
+use package\Infrastructure\Presenter\NotFoundRenderer;
 use package\Infrastructure\Presenter\PaginatorHtmlBuilder;
-use package\Domain\Model\ValueObject\TaskSaveDirectory;
+use package\Infrastructure\Presenter\ViewTaskHtmlRenderer;
+use package\Infrastructure\Service\TaskFileRepository;
 
 require_once 'vendor/autoload.php';
 
@@ -58,6 +63,21 @@ if ($action === 'create' && $method === 'get') {
                 $htmlRenderer,
                 new PaginatorHtmlBuilder()
             )
+        )
+    );
+} elseif ($action === 'contents') {
+    $repository = new TaskFileRepository(
+        new TaskSaveDirectory()
+    );
+    $controller = new ViewTaskHandler();
+    $controller->handle(
+        new ViewTaskService(
+            new ViewTaskValidator(),
+            $repository,
+            new ViewTaskHtmlRenderer(
+                $htmlRenderer
+            ),
+            new NotFoundRenderer()
         )
     );
 } else {

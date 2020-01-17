@@ -81,5 +81,15 @@ final class TaskFileRepository implements TaskRepository
         return file_exists($filename);
     }
 
+    public function findByTitle(TaskTitle $title): ?Task
+    {
+        $filename = $this->saveDirectory . "/{$title->value()}.txt";
+        $body = file_get_contents($filename);
+        return new Task(
+            $title,
+            new TaskBody($body)
+        );
+    }
+
     private $saveDirectory;
 }

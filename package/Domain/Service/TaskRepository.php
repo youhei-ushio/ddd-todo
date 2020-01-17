@@ -21,4 +21,6 @@ interface TaskRepository
     public function count(): int;
 
     public function exists(TaskTitle $title): bool;
+
+    public function findByTitle(TaskTitle $title): ?Task;
 }

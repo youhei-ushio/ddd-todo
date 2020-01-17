@@ -67,7 +67,8 @@ class ListTasksServiceTest extends TestCase
             $this->assertEquals("/?action=contents&task=タイトル{$number}", $element->attributes->getNamedItem('href')->textContent);
         }
 
-        // 一覧へのリンク
+        // 新規作成へのリンク
+        $this->assertEquals('新規タスク', $crawler->filter('.create')->text());
         $this->assertEquals('/?action=create', $crawler->filter('.create')->attr('href'));
     }
 
