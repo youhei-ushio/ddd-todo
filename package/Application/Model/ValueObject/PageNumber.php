@@ -8,7 +8,7 @@ final class PageNumber
     public function __construct(int $value)
     {
         if ($value <= 0) {
-            $this->value = 1;
+            $this->value = self::defaultValue();
         } else {
             $this->value = $value;
         }
