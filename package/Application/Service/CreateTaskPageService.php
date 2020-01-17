@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace package\Application\Service;
 
@@ -11,7 +12,9 @@ final class CreateTaskPageService
         $this->presenter = $presenter;
     }
 
-    public function handle(CreateTaskPageRequest $request): void
+    public function handle(
+        /** @noinspection PhpUnusedParameterInspection */
+        CreateTaskPageRequest $request): void
     {
         $this->presenter->output([], []);
     }

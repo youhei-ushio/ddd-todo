@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace package\Application\Service;
 
@@ -20,7 +21,7 @@ final class ListTasksService
     {
         $tasks = $this->repository->find($request->limit(), $request->page());
         $total = $this->repository->count();
-        $maxPage = ceil($total / $request->limit()->value());
+        $maxPage = (int)ceil($total / $request->limit()->value());
         $this->listTasksPresenter->output(
             $tasks,
             $request->limit(),
