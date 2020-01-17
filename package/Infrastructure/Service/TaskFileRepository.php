@@ -83,6 +83,9 @@ final class TaskFileRepository implements TaskRepository
 
     public function findByTitle(TaskTitle $title): ?Task
     {
+        if (!$this->exists($title)) {
+            return null;
+        }
         $filename = $this->saveDirectory . "/{$title->value()}.txt";
         $body = file_get_contents($filename);
         return new Task(

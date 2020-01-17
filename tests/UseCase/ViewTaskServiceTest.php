@@ -8,6 +8,7 @@ use package\Application\Service\CreateTaskValidator;
 use package\Application\Service\ViewTaskRequest;
 use package\Application\Service\ViewTaskService;
 use package\Application\Service\ViewTaskValidator;
+use package\Domain\Model\ValueObject\TaskTitle;
 use package\Infrastructure\Presenter\CreateTaskHtmlRenderer;
 use package\Infrastructure\Presenter\CreateTaskPageHtmlRenderer;
 use package\Infrastructure\Presenter\HtmlStreamRenderer;
@@ -57,6 +58,81 @@ class ViewTaskServiceTest extends TestCase
     }
 
     /**
+     * バリデーション：空のタイトル
+     *
+     * @runInSeparateProcess
+     */
+    public function testEmptyTitleValidation()
+    {
+        $title = 'タイトルテスト';
+        $this->createTask($title, "本文テスト");
+        $html = $this->viewTaskServiceResponse('');
+        // メモリ上のコンテンツのDOMをクローラで解析する
+        $crawler = new Crawler();
+        $crawler->addContent($html);
+
+        // HTMLタイトル
+        $this->assertEquals('タスク詳細', $crawler->filter('title')->text());
+
+        // 404エラーページが出ること
+        $this->assertEquals('タスクが見つかりません。', $crawler->filter('.error')->text());
+
+        // 一覧へのリンク
+        $this->assertEquals('一覧へ戻る', $crawler->filter('.list')->text());
+        $this->assertEquals('/?action=list', $crawler->filter('.list')->attr('href'));
+    }
+
+    /**
+     * バリデーション：長過ぎるタイトル
+     *
+     * @runInSeparateProcess
+     */
+    public function testTooLongTitleValidation()
+    {
+        $title = 'タイトルテスト';
+        $this->createTask($title, "本文テスト");
+        $html = $this->viewTaskServiceResponse(str_pad('あ', TaskTitle::maxCharacters() + 1));
+        // メモリ上のコンテンツのDOMをクローラで解析する
+        $crawler = new Crawler();
+        $crawler->addContent($html);
+
+        // HTMLタイトル
+        $this->assertEquals('タスク詳細', $crawler->filter('title')->text());
+
+        // 404エラーページが出ること
+        $this->assertEquals('タスクが見つかりません。', $crawler->filter('.error')->text());
+
+        // 一覧へのリンク
+        $this->assertEquals('一覧へ戻る', $crawler->filter('.list')->text());
+        $this->assertEquals('/?action=list', $crawler->filter('.list')->attr('href'));
+    }
+
+    /**
+     * 存在しない
+     *
+     * @runInSeparateProcess
+     */
+    public function testNotFound()
+    {
+        $title = 'タイトルテスト';
+        $this->createTask($title, "本文テスト");
+        $html = $this->viewTaskServiceResponse('適当なタイトル');
+        // メモリ上のコンテンツのDOMをクローラで解析する
+        $crawler = new Crawler();
+        $crawler->addContent($html);
+
+        // HTMLタイトル
+        $this->assertEquals('タスク詳細', $crawler->filter('title')->text());
+
+        // 404エラーページが出ること
+        $this->assertEquals('タスクが見つかりません。', $crawler->filter('.error')->text());
+
+        // 一覧へのリンク
+        $this->assertEquals('一覧へ戻る', $crawler->filter('.list')->text());
+        $this->assertEquals('/?action=list', $crawler->filter('.list')->attr('href'));
+    }
+
+    /**
      * タスク詳細サービスを実行してHTMLレスポンスを得る
      *
      * @param string $title
@@ -76,7 +152,9 @@ class ViewTaskServiceTest extends TestCase
             new ViewTaskHtmlRenderer(
                 $renderer
             ),
-            new NotFoundRenderer()
+            new NotFoundRenderer(
+                $renderer
+            )
         );
         $service->handle(new ViewTaskRequest(
             $title

@@ -14,13 +14,14 @@ final class ViewTaskHtmlRenderer implements ViewTaskPresenter
 
     public function output(Task $task): void
     {
+        $body = htmlspecialchars($task->body()->value());
         $html = "
             <html lang=\"ja\">
                 <head>
                     <title>タスク詳細</title>
                 </head>
                 <body>
-                    <pre class='contents'>{$task->body()->value()}</pre>
+                    <pre class='contents'>{$body}</pre>
                     <a href=\"/?action=list\" class='list'>一覧へ戻る</a>
                 </body>
             </html>

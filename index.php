@@ -77,7 +77,9 @@ if ($action === 'create' && $method === 'get') {
             new ViewTaskHtmlRenderer(
                 $htmlRenderer
             ),
-            new NotFoundRenderer()
+            new NotFoundRenderer(
+                $htmlRenderer
+            )
         )
     );
 } else {
