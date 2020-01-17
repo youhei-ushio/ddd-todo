@@ -19,7 +19,7 @@ final class TaskTitle
             throw new InvalidArgumentException('タイトルに . (ドット)は使用できません。');
         }
         if (mb_strlen($value) > self::maxCharacters()) {
-            throw new InvalidArgumentException(self::maxCharacters() . '文字以上のタイトルは許可されません。');
+            throw new InvalidArgumentException((self::maxCharacters() + 1) . '文字以上のタイトルは許可されません。');
         }
         $this->value = $value;
     }

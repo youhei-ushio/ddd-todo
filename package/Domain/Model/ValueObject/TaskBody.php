@@ -13,7 +13,7 @@ final class TaskBody
             throw new InvalidArgumentException('空の本文は許可されません。');
         }
         if (mb_strlen($value) > self::maxCharacters()) {
-            throw new InvalidArgumentException(self::maxCharacters() . '文字以上の本文は許可されません。');
+            throw new InvalidArgumentException((self::maxCharacters() + 1) . '文字以上の本文は許可されません。');
         }
         $this->value = $value;
     }

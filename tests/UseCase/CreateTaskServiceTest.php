@@ -95,8 +95,8 @@ class CreateTaskServiceTest extends TestCase
      */
     public function testTooLongTitleValidation()
     {
-        $maxCharacters = TaskTitle::maxCharacters();
-        $html = $this->createTaskServiceResponse(str_pad('a', $maxCharacters + 1), '');
+        $invalidLength = TaskTitle::maxCharacters() + 1;
+        $html = $this->createTaskServiceResponse(str_pad('a', $invalidLength), '');
         // メモリ上のコンテンツのDOMをクローラで解析する
         $crawler = new Crawler();
         $crawler->addContent($html);
@@ -110,7 +110,7 @@ class CreateTaskServiceTest extends TestCase
         foreach ($crawler->filter('.validation-error') as $element) {
             $errors[] = $element->textContent;
         }
-        $this->assertTrue(in_array("{$maxCharacters}文字以上のタイトルは許可されません。", $errors));
+        $this->assertTrue(in_array("{$invalidLength}文字以上のタイトルは許可されません。", $errors));
     }
 
     /**
@@ -145,8 +145,8 @@ class CreateTaskServiceTest extends TestCase
      */
     public function testTooLongBodyValidation()
     {
-        $maxCharacters = TaskBody::maxCharacters();
-        $html = $this->createTaskServiceResponse('', str_pad('a', $maxCharacters + 1));
+        $invalidLength = TaskBody::maxCharacters() + 1;
+        $html = $this->createTaskServiceResponse('', str_pad('a', $invalidLength));
         // メモリ上のコンテンツのDOMをクローラで解析する
         $crawler = new Crawler();
         $crawler->addContent($html);
@@ -160,7 +160,7 @@ class CreateTaskServiceTest extends TestCase
         foreach ($crawler->filter('.validation-error') as $element) {
             $errors[] = $element->textContent;
         }
-        $this->assertTrue(in_array("{$maxCharacters}文字以上の本文は許可されません。", $errors));
+        $this->assertTrue(in_array("{$invalidLength}文字以上の本文は許可されません。", $errors));
     }
 
     /**
