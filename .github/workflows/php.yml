@@ -17,6 +17,6 @@ jobs:
           SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
 
       - name: ssh deploy
-        run: ssh -i id_rsa -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no $SSH_HOST 'cd www/todo && git pull && composer install --no-dev'
+        run: echo id_rsa && ssh -i id_rsa -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no $SSH_HOST 'cd www/todo && git pull && composer install --no-dev'
         env:
           SSH_HOST: ${{ secrets.SSH_HOST }}
