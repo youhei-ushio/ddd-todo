@@ -12,7 +12,7 @@ jobs:
 
     steps:
       - name: ssh key generate
-        run: echo ”MIIJQQIBADANBgkqhkiG9w0BAQEFAASCCSswggknAgEAAoICAQCpp” > id_rsa && chmod 600 id_rsa
+        run: echo "$SSH_PRIVATE_KEY" > id_rsa && chmod 600 id_rsa
         env:
           SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
 
