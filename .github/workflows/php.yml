@@ -35,7 +35,7 @@ jobs:
           SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
 
       - name: ssh connect
-        run: ssh $SSH_HOST
+        run: ssh -t $SSH_HOST
         env:
           SSH_HOST: ${{ secrets.SSH_HOST }}
 
