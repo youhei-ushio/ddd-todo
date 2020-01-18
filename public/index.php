@@ -33,7 +33,7 @@ use package\Infrastructure\Presenter\ViewTaskHtmlRenderer;
 use package\Infrastructure\Service\FileAuthenticator;
 use package\Infrastructure\Service\TaskFileRepository;
 
-require_once 'vendor/autoload.php';
+require_once '../vendor/autoload.php';
 
 $auth = new Authentication(
     new FileAuthenticator()
