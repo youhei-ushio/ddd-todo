@@ -22,8 +22,8 @@ final class ListTasksHtmlRenderer implements ListTasksPresenter
      * @param PageNumber $currentPage
      * @param PageNumber $maxPage
      * @param int $total
-     * @param int $firstIndex
-     * @param int $lastIndex
+     * @param int $first
+     * @param int $last
      */
     public function output(
         array $tasks,
@@ -31,8 +31,8 @@ final class ListTasksHtmlRenderer implements ListTasksPresenter
         PageNumber $currentPage,
         PageNumber $maxPage,
         int $total,
-        int $firstIndex,
-        int $lastIndex): void
+        int $first,
+        int $last): void
     {
         $listHtml = '';
         foreach ($tasks as $task) {
@@ -40,8 +40,6 @@ final class ListTasksHtmlRenderer implements ListTasksPresenter
             $listHtml .= "<a href=\"/?action=contents&task={$title}\" class=\"task\">{$title}</a><br>";
         }
         $listHtml .= '<br>';
-        $first = $firstIndex + 1;
-        $last = $lastIndex + 1;
         $listHtml .= "<p class=\"total\">全<span>{$total}</span>件</p>";
         $listHtml .= "<p class=\"current\">{$first}~{$last}を表示中</p>";
         $listHtml .= $this->paginatorHtmlBuilder->build($limit, $currentPage, $maxPage);

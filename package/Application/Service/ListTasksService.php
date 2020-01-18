@@ -22,13 +22,13 @@ final class ListTasksService
         $tasks = $this->repository->find($request->limit(), $request->page());
         $total = $this->repository->count();
         $maxPage = (int)ceil($total / $request->limit()->value());
-        $firstIndex = $request->limit()->value() * ($request->page()->value() - 1);
-        if ($firstIndex >= $total) {
-            $firstIndex = $total;
+        $first = $request->limit()->value() * ($request->page()->value() - 1) + 1;
+        if ($first >= $total) {
+            $first = $total;
         }
-        $lastIndex = $firstIndex + $request->limit()->value() - 1;
-        if ($lastIndex >= $total) {
-            $lastIndex = $total - 1;
+        $last = $first + $request->limit()->value() - 1;
+        if ($last >= $total) {
+            $last = $total;
         }
         $this->listTasksPresenter->output(
             $tasks,
@@ -36,8 +36,8 @@ final class ListTasksService
             $request->page(),
             new PageNumber($maxPage),
             $total,
-            $firstIndex,
-            $lastIndex
+            $first,
+            $last
         );
     }
 
