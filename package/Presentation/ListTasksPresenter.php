@@ -14,6 +14,17 @@ interface ListTasksPresenter
      * @param RowsPerPage $limit
      * @param PageNumber $pageNumber
      * @param PageNumber $maxPage
+     * @param int $total
+     * @param int $firstIndex
+     * @param int $lastIndex
      */
-    public function output(array $tasks, RowsPerPage $limit, PageNumber $pageNumber, PageNumber $maxPage): void;
+    public function output(
+        array $tasks,
+        RowsPerPage $limit,
+        PageNumber $pageNumber,
+        PageNumber $maxPage,
+        int $total,
+        int $firstIndex,
+        int $lastIndex
+    ): void;
 }
