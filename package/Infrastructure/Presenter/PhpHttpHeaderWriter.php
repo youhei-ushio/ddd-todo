@@ -7,6 +7,6 @@ class PhpHttpHeaderWriter implements HttpHeaderWriter
 {
     public function output(string $header, int $responseCode): void
     {
-        header($header, $responseCode);
+        header($header, true, $responseCode);
     }
 }
