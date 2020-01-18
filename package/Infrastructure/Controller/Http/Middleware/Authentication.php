@@ -29,6 +29,7 @@ class Authentication
 
         if (!$this->authenticator->isLoggedIn()) {
             header("Location: http://{$_SERVER['HTTP_HOST']}/?action=login");
+            exit;
         }
     }
 
