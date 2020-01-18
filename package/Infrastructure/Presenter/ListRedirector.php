@@ -3,17 +3,18 @@ declare(strict_types=1);
 
 namespace package\Infrastructure\Presenter;
 
-final class HtmlOutputRenderer implements HtmlRenderer
+use package\Presentation\LoginPresenter;
+
+final class ListRedirector implements LoginPresenter
 {
     public function __construct(HttpHeaderWriter $headerWriter)
     {
         $this->headerWriter = $headerWriter;
     }
 
-    public function render(string $html): void
+    public function output(): void
     {
-        $this->headerWriter->output('Content-type: text/html', 200);
-        echo $html;
+        $this->headerWriter->output("Location: http://{$_SERVER['HTTP_HOST']}/?action=list", 302);
     }
 
     private $headerWriter;

@@ -9,17 +9,18 @@ use package\Infrastructure\Presenter\CreateTaskPageHtmlRenderer;
 use package\Infrastructure\Presenter\HtmlStreamRenderer;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\DomCrawler\Crawler;
+use Tests\Mock\HttpHeadersContainer;
 
 class CreateTaskPageServiceTest extends TestCase
 {
-    /**
-     * @runInSeparateProcess
-     */
     public function testNewPage()
     {
         // サービスの出力先をメモリにする
         $stream = fopen('php://memory', 'r+');
-        $renderer = new HtmlStreamRenderer($stream);
+        $renderer = new HtmlStreamRenderer(
+            $stream,
+            new HttpHeadersContainer()
+        );
         $service = new CreateTaskPageService(
             new CreateTaskPageHtmlRenderer($renderer)
         );

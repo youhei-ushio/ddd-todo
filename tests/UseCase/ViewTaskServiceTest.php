@@ -18,6 +18,7 @@ use package\Infrastructure\Presenter\ViewTaskHtmlRenderer;
 use package\Infrastructure\Service\TaskFileRepository;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\DomCrawler\Crawler;
+use Tests\Mock\HttpHeadersContainer;
 use Tests\Mock\NoHtmlRenderer;
 use Tests\Mock\TestTaskSaveDirectory;
 
@@ -27,6 +28,8 @@ class ViewTaskServiceTest extends TestCase
     {
         parent::setUp();
 
+        $this->httpHeaders = new HttpHeadersContainer();
+
         $directory = new TestTaskSaveDirectory();
         foreach (glob("{$directory->path()}/*.txt") as $filename) {
             unlink($filename);
@@ -35,8 +38,6 @@ class ViewTaskServiceTest extends TestCase
 
     /**
      * 詳細表示
-     *
-     * @runInSeparateProcess
      */
     public function testList()
     {
@@ -60,8 +61,6 @@ class ViewTaskServiceTest extends TestCase
 
     /**
      * バリデーション：空のタイトル
-     *
-     * @runInSeparateProcess
      */
     public function testEmptyTitleValidation()
     {
@@ -85,8 +84,6 @@ class ViewTaskServiceTest extends TestCase
 
     /**
      * バリデーション：長過ぎるタイトル
-     *
-     * @runInSeparateProcess
      */
     public function testTooLongTitleValidation()
     {
@@ -110,8 +107,6 @@ class ViewTaskServiceTest extends TestCase
 
     /**
      * 存在しない
-     *
-     * @runInSeparateProcess
      */
     public function testNotFound()
     {
@@ -127,6 +122,8 @@ class ViewTaskServiceTest extends TestCase
 
         // 404エラーページが出ること
         $this->assertEquals('タスクが見つかりません。', $crawler->filter('.error')->text());
+        $this->assertEquals('HTTP/1.1 404 Not Found', $this->httpHeaders->get()[0]['header']);
+        $this->assertEquals(404, $this->httpHeaders->get()[0]['responseCode']);
 
         // 一覧へのリンク
         $this->assertEquals('一覧へ戻る', $crawler->filter('.list')->text());
@@ -143,7 +140,10 @@ class ViewTaskServiceTest extends TestCase
     {
         // サービスの出力先をメモリにする
         $stream = fopen('php://memory', 'r+');
-        $renderer = new HtmlStreamRenderer($stream);
+        $renderer = new HtmlStreamRenderer(
+            $stream,
+            new HttpHeadersContainer()
+        );
         $repository = new TaskFileRepository(
             new TestTaskSaveDirectory()
         );
@@ -154,9 +154,11 @@ class ViewTaskServiceTest extends TestCase
                 $renderer
             ),
             new NotFoundRenderer(
-                $renderer
+                $renderer,
+                $this->httpHeaders
             )
         );
+        $this->httpHeaders->clear();
         $service->handle(new ViewTaskRequest(
             $title
         ));
@@ -186,4 +188,6 @@ class ViewTaskServiceTest extends TestCase
         );
         $service->handle(new CreateTaskRequest($title, $body));
     }
+
+    private $httpHeaders;
 }

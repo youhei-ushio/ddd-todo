@@ -7,9 +7,10 @@ use package\Presentation\NotFoundPresenter;
 
 final class NotFoundRenderer implements NotFoundPresenter
 {
-    public function __construct(HtmlRenderer $renderer)
+    public function __construct(HtmlRenderer $renderer, HttpHeaderWriter $headerWriter)
     {
         $this->renderer = $renderer;
+        $this->headerWriter = $headerWriter;
     }
 
     public function output(): void
@@ -26,9 +27,10 @@ final class NotFoundRenderer implements NotFoundPresenter
             </html>
         ";
 
-        header("HTTP/1.1 404 Not Found");
+        $this->headerWriter->output('HTTP/1.1 404 Not Found', 404);
         $this->renderer->render($html);
     }
 
     private $renderer;
+    private $headerWriter;
 }

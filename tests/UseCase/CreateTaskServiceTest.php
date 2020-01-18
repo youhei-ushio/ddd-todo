@@ -15,14 +15,13 @@ use package\Infrastructure\Presenter\HtmlStreamRenderer;
 use package\Infrastructure\Service\TaskFileRepository;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\DomCrawler\Crawler;
+use Tests\Mock\HttpHeadersContainer;
 use Tests\Mock\TestTaskSaveDirectory;
 
 class CreateTaskServiceTest extends TestCase
 {
     /**
      * バリデーションエラー：空のタイトル
-     *
-     * @runInSeparateProcess
      */
     public function testEmptyTitleValidation()
     {
@@ -30,6 +29,9 @@ class CreateTaskServiceTest extends TestCase
         // メモリ上のコンテンツのDOMをクローラで解析する
         $crawler = new Crawler();
         $crawler->addContent($html);
+
+        // HTMLタイトル
+        $this->assertEquals('タスク作成', $crawler->filter('title')->text());
 
         $this->assertGreaterThan(0, $crawler->filter('.validation-error')->count());
         $errors = [];
@@ -42,8 +44,6 @@ class CreateTaskServiceTest extends TestCase
 
     /**
      * バリデーションエラー：タイトルにスラッシュを含む
-     *
-     * @runInSeparateProcess
      */
     public function testIllegalSlashValidation()
     {
@@ -66,8 +66,6 @@ class CreateTaskServiceTest extends TestCase
 
     /**
      * バリデーションエラー：タイトルにドットを含む
-     *
-     * @runInSeparateProcess
      */
     public function testIllegalDotValidation()
     {
@@ -90,8 +88,6 @@ class CreateTaskServiceTest extends TestCase
 
     /**
      * バリデーションエラー：タイトルが長すぎる
-     *
-     * @runInSeparateProcess
      */
     public function testTooLongTitleValidation()
     {
@@ -115,8 +111,6 @@ class CreateTaskServiceTest extends TestCase
 
     /**
      * バリデーションエラー：空の本文
-     *
-     * @runInSeparateProcess
      */
     public function testEmptyBodyValidation()
     {
@@ -140,8 +134,6 @@ class CreateTaskServiceTest extends TestCase
 
     /**
      * バリデーションエラー：本文が長すぎる
-     *
-     * @runInSeparateProcess
      */
     public function testTooLongBodyValidation()
     {
@@ -165,8 +157,6 @@ class CreateTaskServiceTest extends TestCase
 
     /**
      * バリデーションエラー：タイトルの重複
-     *
-     * @runInSeparateProcess
      */
     public function testDuplicatedTitleValidation()
     {
@@ -198,8 +188,6 @@ class CreateTaskServiceTest extends TestCase
 
     /**
      * バリデーションエラー後、入力値が復元されている
-     *
-     * @runInSeparateProcess
      */
     public function testRestoreValuesOnValidationError()
     {
@@ -222,8 +210,6 @@ class CreateTaskServiceTest extends TestCase
 
     /**
      * タスク作成成功
-     *
-     * @runInSeparateProcess
      */
     public function testCreate()
     {
@@ -263,7 +249,10 @@ class CreateTaskServiceTest extends TestCase
     {
         // サービスの出力先をメモリにする
         $stream = fopen('php://memory', 'r+');
-        $renderer = new HtmlStreamRenderer($stream);
+        $renderer = new HtmlStreamRenderer(
+            $stream,
+            new HttpHeadersContainer()
+        );
         $repository = new TaskFileRepository(new TestTaskSaveDirectory());
         $service = new CreateTaskService(
             new CreateTaskValidator($repository),

@@ -18,6 +18,7 @@ use package\Infrastructure\Presenter\PaginatorHtmlBuilder;
 use package\Infrastructure\Service\TaskFileRepository;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\DomCrawler\Crawler;
+use Tests\Mock\HttpHeadersContainer;
 use Tests\Mock\NoHtmlRenderer;
 use Tests\Mock\TestTaskSaveDirectory;
 
@@ -35,8 +36,6 @@ class ListTasksServiceTest extends TestCase
 
     /**
      * 一覧表示
-     *
-     * @runInSeparateProcess
      */
     public function testList()
     {
@@ -71,12 +70,13 @@ class ListTasksServiceTest extends TestCase
         // 新規作成へのリンク
         $this->assertEquals('新規タスク', $crawler->filter('.create')->text());
         $this->assertEquals('/?action=create', $crawler->filter('.create')->attr('href'));
+        // ログアウトリンク
+        $this->assertEquals('ログアウト', $crawler->filter('.logout')->text());
+        $this->assertEquals('/?action=logout', $crawler->filter('.logout')->attr('href'));
     }
 
     /**
      * ページネーション
-     *
-     * @runInSeparateProcess
      */
     public function testPagination()
     {
@@ -134,7 +134,10 @@ class ListTasksServiceTest extends TestCase
     {
         // サービスの出力先をメモリにする
         $stream = fopen('php://memory', 'r+');
-        $renderer = new HtmlStreamRenderer($stream);
+        $renderer = new HtmlStreamRenderer(
+            $stream,
+            new HttpHeadersContainer()
+        );
         $repository = new TaskFileRepository(
             new TestTaskSaveDirectory()
         );
@@ -155,7 +158,13 @@ class ListTasksServiceTest extends TestCase
         return $html;
     }
 
-    private function createTask(string $title, string $body)
+    /**
+     * タスクを作成し、レスポンスは破棄する
+     *
+     * @param string $title
+     * @param string $body
+     */
+    private function createTask(string $title, string $body): void
     {
         $repository = new TaskFileRepository(
             new TestTaskSaveDirectory()

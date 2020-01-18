@@ -40,6 +40,7 @@ final class ListTasksHtmlRenderer implements ListTasksPresenter
                 <body>
                     {$listHtml}
                     <p><a href=\"/?action=create\" class=\"create\">新規タスク</a></p>
+                    <p><a href=\"/?action=logout\" class=\"logout\">ログアウト</a></p>
                 </body>
             </html>
         ";
