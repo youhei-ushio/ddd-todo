@@ -12,11 +12,11 @@ jobs:
 
     steps:
       - name: ssh key generate
-        run: echo ”$SSH_PRIVATE_KEY” > key && chmod 600 key
+        run: echo ”$SSH_PRIVATE_KEY” > ~/.ssh/id_rsa && chmod 600 ~/.ssh/id_rsa
         env:
           SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
 
       - name: ssh deploy
-        run: ssh -i key -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no $SSH_HOST 'cd www/todo && git pull && composer install --no-dev'
+        run: ssh -i ~/.ssh/id_rsa -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no $SSH_HOST 'cd www/todo && git pull && composer install --no-dev'
         env:
           SSH_HOST: ${{ secrets.SSH_HOST }}
