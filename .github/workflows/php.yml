@@ -10,8 +10,6 @@ jobs:
 
     runs-on: ubuntu-latest
 
-    needs: build
-
     steps:
       - name: ssh key generate
         run: echo ”$SSH_PRIVATE_KEY” > key && chmod 600 key
