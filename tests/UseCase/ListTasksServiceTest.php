@@ -87,13 +87,13 @@ class ListTasksServiceTest extends TestCase
         }
 
         $limit = 10;
-        $this->_testPagination($limit, 1, $limit, 3);
-        $this->_testPagination($limit, 2, $limit, 3);
-        $this->_testPagination($limit, 3, 5, 3);
+        $this->_testPagination($limit, 1, $limit, 3, $totalCount, 1, 10);
+        $this->_testPagination($limit, 2, $limit, 3, $totalCount, 11, 20);
+        $this->_testPagination($limit, 3, 5, 3, $totalCount, 21, 25);
     }
 
     // 各ページの表示内容
-    private function _testPagination(int $limit, int $currentPage, int $count, int $maxPage)
+    private function _testPagination(int $limit, int $currentPage, int $count, int $maxPage, int $totalCount, int $first, int $last)
     {
         $html = $this->listTasksServiceResponse($limit, $currentPage);
         // メモリ上のコンテンツのDOMをクローラで解析する
@@ -112,6 +112,9 @@ class ListTasksServiceTest extends TestCase
         }
 
         // ページネーション
+        $this->assertEquals("全{$totalCount}件", $crawler->filter('.total')->text());
+        $this->assertEquals("{$first}~{$last}を表示中", $crawler->filter('.current')->text());
+
         for ($index = 0; $index < $maxPage; $index++) {
             $page = $index + 1;
             $this->assertEquals($page, $crawler->filter('.page')->getNode($index)->textContent);

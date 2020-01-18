@@ -42,7 +42,8 @@ final class ListTasksHtmlRenderer implements ListTasksPresenter
         $listHtml .= '<br>';
         $first = $firstIndex + 1;
         $last = $lastIndex + 1;
-        $listHtml .= "<p>全{$total}件 {$first}~{$last}</p>";
+        $listHtml .= "<p class=\"total\">全<span>{$total}</span>件</p>";
+        $listHtml .= "<p class=\"current\">{$first}~{$last}を表示中</p>";
         $listHtml .= $this->paginatorHtmlBuilder->build($limit, $currentPage, $maxPage);
 
         $html = "

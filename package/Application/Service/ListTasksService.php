@@ -23,6 +23,9 @@ final class ListTasksService
         $total = $this->repository->count();
         $maxPage = (int)ceil($total / $request->limit()->value());
         $firstIndex = $request->limit()->value() * ($request->page()->value() - 1);
+        if ($firstIndex >= $total) {
+            $firstIndex = $total;
+        }
         $lastIndex = $firstIndex + $request->limit()->value() - 1;
         if ($lastIndex >= $total) {
             $lastIndex = $total - 1;
