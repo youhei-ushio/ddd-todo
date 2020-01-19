@@ -9,9 +9,11 @@ use package\Application\Service\CreateTaskService;
 use package\Application\Service\CreateTaskValidator;
 use package\Domain\Model\ValueObject\TaskBody;
 use package\Domain\Model\ValueObject\TaskTitle;
+use package\Domain\Service\CreateTaskDomainService;
 use package\Infrastructure\Presenter\CreateTaskHtmlRenderer;
 use package\Infrastructure\Presenter\CreateTaskPageHtmlRenderer;
 use package\Infrastructure\Presenter\HtmlStreamRenderer;
+use package\Infrastructure\Service\SyncEventPublisher;
 use package\Infrastructure\Service\TaskFileRepository;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\DomCrawler\Crawler;
@@ -256,7 +258,10 @@ final class CreateTaskServiceTest extends TestCase
         $repository = new TaskFileRepository(new TestTaskSaveDirectory());
         $service = new CreateTaskService(
             new CreateTaskValidator($repository),
-            $repository,
+            new CreateTaskDomainService(
+                $repository,
+                new SyncEventPublisher()
+            ),
             new CreateTaskHtmlRenderer($renderer),
             new CreateTaskPageHtmlRenderer($renderer)
         );

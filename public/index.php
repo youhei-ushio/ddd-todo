@@ -10,7 +10,9 @@ use package\Application\Service\LoginValidator;
 use package\Application\Service\LogoutService;
 use package\Application\Service\ViewTaskService;
 use package\Application\Service\ViewTaskValidator;
+use package\Domain\Model\Event\TaskCreated;
 use package\Domain\Model\ValueObject\TaskSaveDirectory;
+use package\Domain\Service\CreateTaskDomainService;
 use package\Infrastructure\Controller\Http\CreateTaskHandler;
 use package\Infrastructure\Controller\Http\CreateTaskPageHandler;
 use package\Infrastructure\Controller\Http\ListTasksHandler;
@@ -19,6 +21,7 @@ use package\Infrastructure\Controller\Http\LoginPageHandler;
 use package\Infrastructure\Controller\Http\LogoutHandler;
 use package\Infrastructure\Controller\Http\Middleware\Authentication;
 use package\Infrastructure\Controller\Http\ViewTaskHandler;
+use package\Infrastructure\EventSubscriber\TaskCreatedNotificator;
 use package\Infrastructure\Presenter\CreateTaskHtmlRenderer;
 use package\Infrastructure\Presenter\CreateTaskPageHtmlRenderer;
 use package\Infrastructure\Presenter\HtmlOutputRenderer;
@@ -31,6 +34,7 @@ use package\Infrastructure\Presenter\PaginatorHtmlBuilder;
 use package\Infrastructure\Presenter\PhpHttpHeaderWriter;
 use package\Infrastructure\Presenter\ViewTaskHtmlRenderer;
 use package\Infrastructure\Service\FileAuthenticator;
+use package\Infrastructure\Service\SyncEventPublisher;
 use package\Infrastructure\Service\TaskFileRepository;
 
 require_once '../vendor/autoload.php';
@@ -39,6 +43,12 @@ $auth = new Authentication(
     new FileAuthenticator()
 );
 $auth->guard();
+
+$eventPublisher = new SyncEventPublisher();
+$eventPublisher->addSubscriber(
+    TaskCreated::class,
+    new TaskCreatedNotificator()
+);
 
 // GETパラメータのactionとhttpメソッドで処理を振り分ける
 // 判定しやすいように小文字固定にしておく
@@ -69,7 +79,10 @@ if ($action === 'create' && $method === 'get') {
             new CreateTaskValidator(
                 $repository
             ),
-            $repository,
+            new CreateTaskDomainService(
+                $repository,
+                $eventPublisher
+            ),
             new CreateTaskHtmlRenderer($htmlRenderer),
             new CreateTaskPageHtmlRenderer($htmlRenderer)
         )

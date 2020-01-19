@@ -10,7 +10,7 @@
         }
     },
     "require": {
-
+        "guzzlehttp/guzzle": "^6.5"
     },
     "require-dev": {
         "ext-dom": "*",

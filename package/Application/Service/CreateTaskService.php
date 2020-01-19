@@ -3,8 +3,7 @@ declare(strict_types=1);
 
 namespace package\Application\Service;
 
-use package\Domain\Model\Entity\Task;
-use package\Domain\Service\TaskRepository;
+use package\Domain\Service\CreateTaskDomainService;
 use package\Presentation\CreateTaskPagePresenter;
 use package\Presentation\CreateTaskPresenter;
 
@@ -12,12 +11,12 @@ final class CreateTaskService
 {
     public function __construct(
         CreateTaskValidator $validator,
-        TaskRepository $repository,
+        CreateTaskDomainService $domainService,
         CreateTaskPresenter $createTaskPresenter,
         CreateTaskPagePresenter $createTaskPagePresenter)
     {
         $this->validator = $validator;
-        $this->repository = $repository;
+        $this->domainService = $domainService;
         $this->createTaskPresenter = $createTaskPresenter;
         $this->createTaskPagePresenter = $createTaskPagePresenter;
     }
@@ -30,17 +29,16 @@ final class CreateTaskService
             return;
         }
 
-        $task = new Task(
+        $this->domainService->handle(
             $request->title(),
             $request->body()
         );
-        $this->repository->save($task);
 
         $this->createTaskPresenter->output();
     }
 
     private $validator;
-    private $repository;
+    private $domainService;
     private $createTaskPresenter;
     private $createTaskPagePresenter;
 }

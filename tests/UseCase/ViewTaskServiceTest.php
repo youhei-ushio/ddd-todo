@@ -10,11 +10,13 @@ use package\Application\Service\ViewTaskRequest;
 use package\Application\Service\ViewTaskService;
 use package\Application\Service\ViewTaskValidator;
 use package\Domain\Model\ValueObject\TaskTitle;
+use package\Domain\Service\CreateTaskDomainService;
 use package\Infrastructure\Presenter\CreateTaskHtmlRenderer;
 use package\Infrastructure\Presenter\CreateTaskPageHtmlRenderer;
 use package\Infrastructure\Presenter\HtmlStreamRenderer;
 use package\Infrastructure\Presenter\NotFoundRenderer;
 use package\Infrastructure\Presenter\ViewTaskHtmlRenderer;
+use package\Infrastructure\Service\SyncEventPublisher;
 use package\Infrastructure\Service\TaskFileRepository;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\DomCrawler\Crawler;
@@ -184,7 +186,10 @@ final class ViewTaskServiceTest extends TestCase
             new CreateTaskValidator(
                 $repository
             ),
-            $repository,
+            new CreateTaskDomainService(
+                $repository,
+                new SyncEventPublisher()
+            ),
             new CreateTaskHtmlRenderer(
                 $htmlRenderer
             ),

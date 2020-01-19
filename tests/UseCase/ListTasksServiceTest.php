@@ -10,11 +10,13 @@ use package\Application\Service\CreateTaskService;
 use package\Application\Service\CreateTaskValidator;
 use package\Application\Service\ListTasksRequest;
 use package\Application\Service\ListTasksService;
+use package\Domain\Service\CreateTaskDomainService;
 use package\Infrastructure\Presenter\CreateTaskHtmlRenderer;
 use package\Infrastructure\Presenter\CreateTaskPageHtmlRenderer;
 use package\Infrastructure\Presenter\HtmlStreamRenderer;
 use package\Infrastructure\Presenter\ListTasksHtmlRenderer;
 use package\Infrastructure\Presenter\PaginatorHtmlBuilder;
+use package\Infrastructure\Service\SyncEventPublisher;
 use package\Infrastructure\Service\TaskFileRepository;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\DomCrawler\Crawler;
@@ -177,7 +179,10 @@ final class ListTasksServiceTest extends TestCase
             new CreateTaskValidator(
                 $repository
             ),
-            $repository,
+            new CreateTaskDomainService(
+                $repository,
+                new SyncEventPublisher()
+            ),
             new CreateTaskHtmlRenderer(
                 $htmlRenderer
             ),
