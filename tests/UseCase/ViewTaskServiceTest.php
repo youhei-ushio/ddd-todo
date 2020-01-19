@@ -22,7 +22,7 @@ use Tests\Mock\HttpHeadersContainer;
 use Tests\Mock\NoHtmlRenderer;
 use Tests\Mock\TestTaskSaveDirectory;
 
-class ViewTaskServiceTest extends TestCase
+final class ViewTaskServiceTest extends TestCase
 {
     public function setUp(): void
     {
@@ -39,7 +39,7 @@ class ViewTaskServiceTest extends TestCase
     /**
      * 詳細表示
      */
-    public function testList()
+    public function testList(): void
     {
         $title = 'タイトルテスト';
         $this->createTask($title, "本文テスト");
@@ -62,7 +62,7 @@ class ViewTaskServiceTest extends TestCase
     /**
      * バリデーション：空のタイトル
      */
-    public function testEmptyTitleValidation()
+    public function testEmptyTitleValidation(): void
     {
         $title = 'タイトルテスト';
         $this->createTask($title, "本文テスト");
@@ -85,7 +85,7 @@ class ViewTaskServiceTest extends TestCase
     /**
      * バリデーション：長過ぎるタイトル
      */
-    public function testTooLongTitleValidation()
+    public function testTooLongTitleValidation(): void
     {
         $title = 'タイトルテスト';
         $this->createTask($title, "本文テスト");
@@ -108,7 +108,7 @@ class ViewTaskServiceTest extends TestCase
     /**
      * 存在しない
      */
-    public function testNotFound()
+    public function testNotFound(): void
     {
         $title = 'タイトルテスト';
         $this->createTask($title, "本文テスト");
@@ -168,7 +168,13 @@ class ViewTaskServiceTest extends TestCase
         return $html;
     }
 
-    private function createTask(string $title, string $body)
+    /**
+     * タスクを作成し、レスポンスは破棄する
+     *
+     * @param string $title
+     * @param string $body
+     */
+    private function createTask(string $title, string $body): void
     {
         $repository = new TaskFileRepository(
             new TestTaskSaveDirectory()

@@ -5,7 +5,7 @@ namespace Tests\Mock;
 
 use package\Infrastructure\Presenter\HttpHeaderWriter;
 
-class HttpHeadersContainer implements HttpHeaderWriter
+final class HttpHeadersContainer implements HttpHeaderWriter
 {
     public function output(string $header, int $responseCode): void
     {

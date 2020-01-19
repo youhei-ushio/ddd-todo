@@ -18,7 +18,7 @@ use Tests\Mock\HttpHeadersContainer;
 use Tests\Mock\LoginRedirectFaker;
 use Tests\Mock\SuccessAuthenticator;
 
-class LoginServiceTest extends TestCase
+final class LoginServiceTest extends TestCase
 {
     public function setUp(): void
     {
@@ -30,7 +30,7 @@ class LoginServiceTest extends TestCase
     /**
      * バリデーションエラー：空のアカウント名
      */
-    public function testEmptyTitleValidation()
+    public function testEmptyTitleValidation(): void
     {
         $html = $this->loginFailureResponse('', '');
         // メモリ上のコンテンツのDOMをクローラで解析する
@@ -52,7 +52,7 @@ class LoginServiceTest extends TestCase
     /**
      * バリデーションエラー：空のパスワード
      */
-    public function testEmptyBodyValidation()
+    public function testEmptyBodyValidation(): void
     {
         $html = $this->loginFailureResponse('', '');
         // メモリ上のコンテンツのDOMをクローラで解析する
@@ -74,7 +74,7 @@ class LoginServiceTest extends TestCase
     /**
      * バリデーションエラー後、入力値が復元されている
      */
-    public function testRestoreValuesOnValidationError()
+    public function testRestoreValuesOnValidationError(): void
     {
         $name = str_pad('a', TaskTitle::maxCharacters() + 1);
         $html = $this->loginFailureResponse($name, '');
@@ -92,7 +92,7 @@ class LoginServiceTest extends TestCase
     /**
      * ログイン失敗
      */
-    public function testLoginFailure()
+    public function testLoginFailure(): void
     {
         $title = 'てすと';
         $html = $this->loginFailureResponse($title, 'hoge');
@@ -113,7 +113,7 @@ class LoginServiceTest extends TestCase
     /**
      * ログイン成功
      */
-    public function testLogin()
+    public function testLogin(): void
     {
         $html = $this->loginSuccessResponse('てすと', 'hogehoge');
         // メモリ上のコンテンツのDOMをクローラで解析する

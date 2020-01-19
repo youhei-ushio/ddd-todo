@@ -5,7 +5,7 @@ namespace package\Infrastructure\Controller\Http\Middleware;
 
 use package\Application\Service\Authenticator;
 
-class Authentication
+final class Authentication
 {
     public function __construct(Authenticator $authenticator)
     {

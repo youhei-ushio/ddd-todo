@@ -11,9 +11,9 @@ use PHPUnit\Framework\TestCase;
 use Symfony\Component\DomCrawler\Crawler;
 use Tests\Mock\HttpHeadersContainer;
 
-class CreateTaskPageServiceTest extends TestCase
+final class CreateTaskPageServiceTest extends TestCase
 {
-    public function testNewPage()
+    public function testNewPage(): void
     {
         // サービスの出力先をメモリにする
         $stream = fopen('php://memory', 'r+');

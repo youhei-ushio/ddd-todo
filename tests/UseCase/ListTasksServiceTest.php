@@ -22,7 +22,7 @@ use Tests\Mock\HttpHeadersContainer;
 use Tests\Mock\NoHtmlRenderer;
 use Tests\Mock\TestTaskSaveDirectory;
 
-class ListTasksServiceTest extends TestCase
+final class ListTasksServiceTest extends TestCase
 {
     public function setUp(): void
     {
@@ -37,7 +37,7 @@ class ListTasksServiceTest extends TestCase
     /**
      * 一覧表示
      */
-    public function testList()
+    public function testList(): void
     {
         $totalCount = 10;
 
@@ -78,7 +78,7 @@ class ListTasksServiceTest extends TestCase
     /**
      * ページネーション
      */
-    public function testPagination()
+    public function testPagination(): void
     {
         $totalCount = 25;
         for ($index = 0; $index < $totalCount; $index++) {
@@ -93,7 +93,7 @@ class ListTasksServiceTest extends TestCase
     }
 
     // 各ページの表示内容
-    private function _testPagination(int $limit, int $currentPage, int $count, int $maxPage, int $totalCount, int $first, int $last)
+    private function _testPagination(int $limit, int $currentPage, int $count, int $maxPage, int $totalCount, int $first, int $last): void
     {
         $html = $this->listTasksServiceResponse($limit, $currentPage);
         // メモリ上のコンテンツのDOMをクローラで解析する

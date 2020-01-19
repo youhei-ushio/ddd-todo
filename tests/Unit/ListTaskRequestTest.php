@@ -6,7 +6,7 @@ namespace Tests\Unit;
 use package\Application\Service\ListTasksRequest;
 use PHPUnit\Framework\TestCase;
 
-class ListTaskRequestTest extends TestCase
+final class ListTaskRequestTest extends TestCase
 {
     // 有効な値
     public function testValidValue()

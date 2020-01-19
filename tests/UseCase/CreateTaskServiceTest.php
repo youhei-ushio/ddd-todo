@@ -18,12 +18,12 @@ use Symfony\Component\DomCrawler\Crawler;
 use Tests\Mock\HttpHeadersContainer;
 use Tests\Mock\TestTaskSaveDirectory;
 
-class CreateTaskServiceTest extends TestCase
+final class CreateTaskServiceTest extends TestCase
 {
     /**
      * バリデーションエラー：空のタイトル
      */
-    public function testEmptyTitleValidation()
+    public function testEmptyTitleValidation(): void
     {
         $html = $this->createTaskServiceResponse('', '');
         // メモリ上のコンテンツのDOMをクローラで解析する
@@ -45,7 +45,7 @@ class CreateTaskServiceTest extends TestCase
     /**
      * バリデーションエラー：タイトルにスラッシュを含む
      */
-    public function testIllegalSlashValidation()
+    public function testIllegalSlashValidation(): void
     {
         $html = $this->createTaskServiceResponse('abc/test', '');
         // メモリ上のコンテンツのDOMをクローラで解析する
@@ -67,7 +67,7 @@ class CreateTaskServiceTest extends TestCase
     /**
      * バリデーションエラー：タイトルにドットを含む
      */
-    public function testIllegalDotValidation()
+    public function testIllegalDotValidation(): void
     {
         $html = $this->createTaskServiceResponse('abc.test', '');
         // メモリ上のコンテンツのDOMをクローラで解析する
@@ -89,7 +89,7 @@ class CreateTaskServiceTest extends TestCase
     /**
      * バリデーションエラー：タイトルが長すぎる
      */
-    public function testTooLongTitleValidation()
+    public function testTooLongTitleValidation(): void
     {
         $invalidLength = TaskTitle::maxCharacters() + 1;
         $html = $this->createTaskServiceResponse(str_pad('a', $invalidLength), '');
@@ -112,7 +112,7 @@ class CreateTaskServiceTest extends TestCase
     /**
      * バリデーションエラー：空の本文
      */
-    public function testEmptyBodyValidation()
+    public function testEmptyBodyValidation(): void
     {
         $html = $this->createTaskServiceResponse('', '');
         // メモリ上のコンテンツのDOMをクローラで解析する
@@ -135,7 +135,7 @@ class CreateTaskServiceTest extends TestCase
     /**
      * バリデーションエラー：本文が長すぎる
      */
-    public function testTooLongBodyValidation()
+    public function testTooLongBodyValidation(): void
     {
         $invalidLength = TaskBody::maxCharacters() + 1;
         $html = $this->createTaskServiceResponse('', str_pad('a', $invalidLength));
@@ -158,7 +158,7 @@ class CreateTaskServiceTest extends TestCase
     /**
      * バリデーションエラー：タイトルの重複
      */
-    public function testDuplicatedTitleValidation()
+    public function testDuplicatedTitleValidation(): void
     {
         $title = '重複確認' . date('Ymdhis');
         $body = "てすと1\nてすと2\nてすと3";
@@ -189,7 +189,7 @@ class CreateTaskServiceTest extends TestCase
     /**
      * バリデーションエラー後、入力値が復元されている
      */
-    public function testRestoreValuesOnValidationError()
+    public function testRestoreValuesOnValidationError(): void
     {
         $title = str_pad('a', TaskTitle::maxCharacters() + 1);
         $body = str_pad('a', TaskBody::maxCharacters() + 1);
@@ -211,7 +211,7 @@ class CreateTaskServiceTest extends TestCase
     /**
      * タスク作成成功
      */
-    public function testCreate()
+    public function testCreate(): void
     {
         $title = 'てすと' . date('Ymdhis');
         $body = "てすと1\nてすと2\nてすと3";
