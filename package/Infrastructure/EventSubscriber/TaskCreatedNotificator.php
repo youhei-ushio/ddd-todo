@@ -16,6 +16,8 @@ class TaskCreatedNotificator
             return;
         }
 
+        $this->writeErrorLog('slack連携設定:' . var_export($config, true));
+
         try {
             $client = new Client();
             $response = $client->post('https://slack.com/api/chat.postMessage', [
