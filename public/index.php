@@ -21,7 +21,7 @@ use package\Infrastructure\Controller\Http\LoginPageHandler;
 use package\Infrastructure\Controller\Http\LogoutHandler;
 use package\Infrastructure\Controller\Http\Middleware\Authentication;
 use package\Infrastructure\Controller\Http\ViewTaskHandler;
-use package\Infrastructure\EventSubscriber\TaskCreatedNotificator;
+use package\Infrastructure\EventSubscriber\TaskCreatedSlackNotificator;
 use package\Infrastructure\Presenter\CreateTaskHtmlRenderer;
 use package\Infrastructure\Presenter\CreateTaskPageHtmlRenderer;
 use package\Infrastructure\Presenter\HtmlOutputRenderer;
@@ -47,7 +47,7 @@ $auth->guard();
 $eventPublisher = new SyncEventPublisher();
 $eventPublisher->addSubscriber(
     TaskCreated::class,
-    new TaskCreatedNotificator()
+    new TaskCreatedSlackNotificator()
 );
 
 // GETパラメータのactionとhttpメソッドで処理を振り分ける

@@ -7,7 +7,7 @@ use Exception;
 use package\Domain\Model\Event\TaskCreated;
 use GuzzleHttp\Client;
 
-class TaskCreatedNotificator
+class TaskCreatedSlackNotificator
 {
     public function handle(TaskCreated $event): void
     {
