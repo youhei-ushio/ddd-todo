@@ -30,6 +30,7 @@ class TaskCreatedNotificator
             ]);
         } catch (Exception $exception) {
             // ログの仕組みがまだ無いのでとりあえず何もしない
+            $this->writeErrorLog('slack連携エラー:' . $exception->getMessage());
         }
     }
 
@@ -41,15 +42,26 @@ class TaskCreatedNotificator
         $directory = dirname($directory);
         $config = file_get_contents("{$directory}/.slack");
         if ($config === false || $config === '') {
+            $this->writeErrorLog('設定エラー:' . $config);
             return [];
         }
         $config = explode(',', $config);
         if (count($config) < 2) {
+            $this->writeErrorLog('設定エラー:' . $config);
             return [];
         }
         return [
             'token' => $config[0],
             'channel' => $config[1],
         ];
+    }
+
+    private function writeErrorLog(string $message)
+    {
+        $directory = __DIR__;
+        $directory = dirname($directory);
+        $directory = dirname($directory);
+        $directory = dirname($directory);
+        file_put_contents("{$directory}/log.txt", $message . PHP_EOL, FILE_APPEND);
     }
 }
