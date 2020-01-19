@@ -25,7 +25,7 @@ class TaskCreatedNotificator
                 ],
                 'json' => [
                     'channel' => $config['channel'],
-                    "text" => "タスク [{$event->task()->title()}] が登録されました。"
+                    "text" => "タスク [{$event->task()->title()->value()}] が登録されました。"
                 ],
             ]);
         } catch (Exception $exception) {
