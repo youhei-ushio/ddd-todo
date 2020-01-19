@@ -11,14 +11,19 @@ class SyncEventPublisher implements EventPublisher
     public function publish(Event $event): void
     {
         $className = get_class($event);
-        if (array_key_exists($className, $this->subscribers)) {
-            $this->subscribers[$className]->handle($event);
+        foreach ($this->subscribers as $subscriber) {
+            if ($subscriber['event'] === $className) {
+                $subscriber['subscriber']->handle($event);
+            }
         }
     }
 
     public function addSubscriber(string $eventClassName, $subscriber): void
     {
-        $this->subscribers[$eventClassName] = $subscriber;
+        $this->subscribers[] = [
+            'event' => $eventClassName,
+            'subscriber' => $subscriber,
+        ];
     }
 
     private $subscribers = [];
