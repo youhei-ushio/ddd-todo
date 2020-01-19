@@ -18,7 +18,7 @@ class TaskCreatedNotificator
 
         try {
             $client = new Client();
-            $client->post('https://slack.com/api/chat.postMessage', [
+            $response = $client->post('https://slack.com/api/chat.postMessage', [
                 'headers' => [
                     'Content-Type' => 'application/json; charset=UTF-8',
                     'Authorization' => 'Bearer ' . $config['token'],
@@ -28,6 +28,7 @@ class TaskCreatedNotificator
                     "text" => "タスク [{$event->task()->title()->value()}] が登録されました。"
                 ],
             ]);
+            $this->writeErrorLog('slack連携結果:' . $response->getBody());
         } catch (Exception $exception) {
             // ログの仕組みがまだ無いのでとりあえず何もしない
             $this->writeErrorLog('slack連携エラー:' . $exception->getMessage());
