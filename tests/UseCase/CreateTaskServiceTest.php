@@ -7,6 +7,7 @@ use DOMElement;
 use package\Application\Service\CreateTaskRequest;
 use package\Application\Service\CreateTaskService;
 use package\Application\Service\CreateTaskValidator;
+use package\Domain\Model\Event\TaskCreated;
 use package\Domain\Model\ValueObject\TaskBody;
 use package\Domain\Model\ValueObject\TaskTitle;
 use package\Domain\Service\CreateTaskDomainService;
@@ -17,7 +18,10 @@ use package\Infrastructure\Service\SyncEventPublisher;
 use package\Infrastructure\Service\TaskFileRepository;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\DomCrawler\Crawler;
+use Tests\Mock\CreateTaskSubscriber;
+use Tests\Mock\EmptyTaskRepository;
 use Tests\Mock\HttpHeadersContainer;
+use Tests\Mock\NoHtmlRenderer;
 use Tests\Mock\TestTaskSaveDirectory;
 
 final class CreateTaskServiceTest extends TestCase
@@ -238,6 +242,38 @@ final class CreateTaskServiceTest extends TestCase
 
         // 後始末
         unlink($filename);
+    }
+
+    /**
+     * タスク作成イベントの発行
+     */
+    public function testTaskCreatedEvent(): void
+    {
+        // イベントだけ見たいので、リポジトリはダミー、HTML出力も無し
+        $eventPublisher = new SyncEventPublisher();
+        $createTaskSubscriber = new CreateTaskSubscriber();
+        $eventPublisher->addSubscriber(
+            TaskCreated::class,
+            $createTaskSubscriber
+        );
+        $htmlRenderer = new NoHtmlRenderer();
+        $repository = new EmptyTaskRepository();
+        $service = new CreateTaskService(
+            new CreateTaskValidator($repository),
+            new CreateTaskDomainService(
+                $repository,
+                $eventPublisher
+            ),
+            new CreateTaskHtmlRenderer($htmlRenderer),
+            new CreateTaskPageHtmlRenderer($htmlRenderer)
+        );
+        $title = 'イベント' . date('Ymdhis');
+        $service->handle(new CreateTaskRequest(
+            $title,
+            'てすと'
+        ));
+
+        $this->assertEquals($title, $createTaskSubscriber->lastPublished()->title()->value());
     }
 
     /**
