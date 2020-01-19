@@ -48,7 +48,7 @@ class TaskCreatedNotificator
             $this->writeErrorLog('設定エラー:' . $config);
             return [];
         }
-        $config = explode(',', $config);
+        $config = explode(',', trim($config));
         if (count($config) < 2) {
             $this->writeErrorLog('設定エラー:' . $config);
             return [];
