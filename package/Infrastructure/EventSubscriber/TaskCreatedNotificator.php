@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace package\Infrastructure\EventSubscriber;
 
+use Exception;
 use package\Domain\Model\Event\TaskCreated;
 use GuzzleHttp\Client;
 
@@ -15,18 +16,21 @@ class TaskCreatedNotificator
             return;
         }
 
-        $client = new Client();
-        $response = $client->post('https://slack.com/api/chat.postMessage', [
-            'headers' => [
-                'Content-Type'  =>  'application/json; charset=UTF-8',
-                'Authorization' =>  'Bearer ' . $config['token'],
-            ],
-            'json' => [
-                'channel' => $config['channel'],
-                "text" => "タスク [{$event->task()->title()}] が登録されました。"
-            ],
-        ]);
-        echo $response->getBody();
+        try {
+            $client = new Client();
+            $client->post('https://slack.com/api/chat.postMessage', [
+                'headers' => [
+                    'Content-Type' => 'application/json; charset=UTF-8',
+                    'Authorization' => 'Bearer ' . $config['token'],
+                ],
+                'json' => [
+                    'channel' => $config['channel'],
+                    "text" => "タスク [{$event->task()->title()}] が登録されました。"
+                ],
+            ]);
+        } catch (Exception $exception) {
+            // ログの仕組みがまだ無いのでとりあえず何もしない
+        }
     }
 
     private function slackConfigs(): array
